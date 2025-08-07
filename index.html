@@ -225,6 +225,7 @@
 
 <div class="botoes-container">
   <button id="btn-build" onclick="gerarBuild()">Gerar build completa</button>
+  <button onclick="limparBuild()">Limpar Build</button>
   <button id="btn-roletar" onclick="roletarItem()">Gerar item por item</button>
 </div>
 
@@ -467,6 +468,23 @@
             blockedItems.add(item);
         }
     }
+
+    function limparBuild() {
+        // Limpa o array da build atual
+        buildAtual = [];
+        
+        // Reseta itensDisponiveis e botasDisponiveis para seus valores iniciais
+        itensDisponiveis = [...itens];  // 'itens' é seu array original com todos os itens
+        botasDisponiveis = [
+            "Berserker's Greaves", "Plated Steelcaps", "Boots of Swiftness",
+            "Sorcerer's Shoes", "Ionian Boots of Lucidity", "Symbiotic Soles", "Mercury's Treads"
+        ];
+        
+        // Limpa o container visual da build (div com id 'resultado' no seu código)
+        document.getElementById('resultado').innerHTML = '';
+    }
+
+    
 
     function gerarBuild() {
         const itensDisponiveis = itens.filter(item => !blockedItems.has(item));
