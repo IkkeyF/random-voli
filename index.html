@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Builds - Volibear</title>
+    <style>
+        body {
+            font-family: 'Beaufort for LoL', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #0a1428;
+            color: #e0d3b8;
+            min-height: 100vh;
+        }
+        .champion-icon {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto;
+            border: 4px solid #c89b3c;
+            border-radius: 50%;
+            background: #1a2a3a;
+            box-shadow: 0 0 20px rgba(200, 155, 60, 0.7);
+            overflow: hidden;
+        }
+        
+        .champion-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 10px;
+            filter: drop-shadow(0 0 10px rgba(200, 155, 60, 0.5));
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            color: #f0e6d2;
+            text-shadow: 0 0 5px #c89b3c, 0 0 10px #785a28;
+            background: linear-gradient(90deg, #1e2328 0%, #463714 50%, #1e2328 100%);
+            padding: 20px 0;
+            border-bottom: 4px solid #c89b3c;
+            border-top: 4px solid #c89b3c;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin: 0 0 30px 0;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .item-list {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+            background: #1a2a3a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #c89b3c;
+            box-shadow: 0 0 15px rgba(200, 155, 60, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .item {
+            margin: 5px 0;
+            padding: 8px 12px;
+            background: linear-gradient(to right, #1e2328 0%, #3a3a3a 100%);
+            border-radius: 6px;
+            border-left: 4px solid #c89b3c;
+            transition: all 0.2s ease;
+            color: #f0e6d2;
+            font-weight: 500;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .item-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid #785a28;
+        }
+        
+        .item:hover {
+            background-color: rgba(60, 80, 100, 0.8);
+            transform: translateX(5px);
+        }
+        
+        .item input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: #d4af37;
+            transform: scale(1.2);
+        }
+        button {
+            display: block;
+            margin: 0 auto 30px auto;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: #1a2a3a;
+            color: #f0e6d2;
+            border: 2px solid #c89b3c;
+            position: relative;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: linear-gradient(to bottom, #4a7eb5, #2e5d9c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .result {
+            margin: 0 auto 30px auto;
+            padding: 20px;
+            width: 70%;
+            background: #1a2a3a;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+            color: #f0e6d2;
+            border: 2px solid #c89b3c;
+            box-shadow: 0 0 15px rgba(200, 155, 60, 0.7);
+            text-shadow: 0 0 5px #785a28;
+        }
+        
+        #items::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #items::-webkit-scrollbar-track {
+            background: rgba(20, 30, 40, 0.5);
+            border-radius: 10px;
+        }
+        
+        #items::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 10px;
+        }
+
+            .build-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .build-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 64px;
+            text-align: center;
+            color: #f0e6d2;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .build-item img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #c89b3c;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .build-item span {
+            margin-top: 5px;
+        }
+        
+        .botoes-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Espaçamento entre os botões */
+            margin-top: 20px;
+        }
+
+        .botoes-container button {
+            padding: 10px 20px;
+            font-weight: bold;
+            background-color: #c89b3c;
+            color: #0a1428;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .botoes-container button:hover {
+            background-color: #e5c07b;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+<div class="champion-icon">
+  <img src="https://www.mobafire.com/images/champion/square/volibear.png">
+</div>
+<h1>Gerador de Builds - Volibear</h1>
+
+<div class="result" id="resultado"></div>
+
+<div class="botoes-container">
+  <button id="btn-build" onclick="gerarBuild()">Gerar build completa</button>
+  <button id="btn-roletar" onclick="roletarItem()">Gerar item por item</button>
+</div>
+
+
+<div class="item-list">
+    <h2>Selecione os itens para bloquear:</h2>
+    <div id="items"></div>
+</div>
+
+<script>
+
+    let buildAtual = [];
+    let itensDisponiveis = [];
+    let botasDisponiveis = [];
+
+    const itemImages = {
+        // Armor/Magic Resist Items
+        "Abyssal Mask": "https://wiki.leagueoflegends.com/en-us/images/Abyssal_Mask_WR_item.png?d8a32", // Paste URL for Abyssal Mask
+        "Banshee’s Veil": "https://leagueofitems.com/images/items/256/3102.webp", 
+        "Force of Nature": "https://leagueofitems.com/images/items/256/4401.webp",
+        "Frozen Heart": "https://leagueofitems.com/images/items/256/3110.webp",
+        "Kaenic Rookern": "https://leagueofitems.com/images/items/256/2504.webp",
+        "Randuin’s Omen": "https://leagueofitems.com/images/items/256/3143.webp",
+        "Spirit Visage": "https://leagueofitems.com/images/items/256/3065.webp",
+        "Thornmail": "https://leagueofitems.com/images/items/256/3075.webp",
+        "Iceborn Gauntlet": "https://leagueofitems.com/images/items/256/6662.webp",
+        "Jak’Shō, The Protean": "https://leagueofitems.com/images/items/256/6665.webp",
+        "Overlord’s Bloodmail": "https://leagueofitems.com/images/items/256/2501.webp",
+        "Unending Despair": "https://preview.redd.it/why-isnt-unending-despair-in-wild-rift-yet-v0-9dxpl3b2p58e1.png?width=640&crop=smart&auto=webp&s=2dddb9fd34d7254b268e700a0a665d6e413e02f8",
+
+        
+        // Attack Damage Items
+        "Black Cleaver": "https://leagueofitems.com/images/items/256/3071.webp", 
+        "Blade of the Ruined King": "https://leagueofitems.com/images/items/256/3153.webp",
+        "Bloodthirster": "https://leagueofitems.com/images/items/256/3072.webp",
+        "Death’s Dance": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-QMOH9s3gzlbQChDqW2iy1R61tzuD5tWrOg&s",
+        "Eclipse": "https://wiki.leagueoflegends.com/en-us/images/Eclipse_WR_item_HD.png?25d4e",
+        "Guardian Angel": "https://preview.redd.it/t2uie7yt64661.png?width=512&format=png&auto=webp&s=53c35da5d1cf3d97d50628b0f172daf793c1616e",
+        "Hubris": "https://leagueofitems.com/images/items/256/6697.webp",
+        "Maw of Malmortius": "https://leagueofitems.com/images/items/256/3156.webp",
+        "Sterak’s Gage": "https://leagueofitems.com/images/items/256/3053.webp",
+        "Essence Reaver": "https://leagueofitems.com/images/items/256/3508.webp",
+        "Hullbreaker": "https://leagueofitems.com/images/items/256/3181.webp",
+        "Infinity Edge": "https://leagueofitems.com/images/items/256/3031.webp",
+        "Lord Dominik’s Regards": "https://leagueofitems.com/images/items/256/3036.webp",
+        "Manamune": "https://leagueofitems.com/images/items/256/3004.webp",
+        "Mercurial Scimitar": "https://leagueofitems.com/images/items/256/3139.webp",
+        "Mortal Reminder": "https://leagueofitems.com/images/items/256/3033.webp",
+        "Stridebreaker": "https://leagueofitems.com/images/items/256/6631.webp",
+        "Sundered Sky": "https://leagueofitems.com/images/items/256/6610.webp",
+        "Titanic Hydra": "https://leagueofitems.com/images/items/256/3748.webp",
+        "Trinity Force": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsItULL9D4SpZJW9_kYFlJPrwyhISBP39reQ&s",
+
+        
+        // Ability Power Items  
+        "Archangel’s Staff": "https://leagueofitems.com/images/items/256/3003.webp",
+        "Horizon Focus": "https://leagueofitems.com/images/items/256/4628.webp",
+        "Lich Bane": "https://leagueofitems.com/images/items/256/3100.webp",
+        "Rabadon’s Deathcap": "https://leagueofitems.com/images/items/256/3089.webp",
+        "Shadowflame": "https://leagueofitems.com/images/items/256/4645.webp",
+        "Void Staff": "https://leagueofitems.com/images/items/256/3135.webp",
+        "Zhonya’s Hourglass": "https://leagueofitems.com/images/items/256/3157.webp",
+        "Blackfire Torch": "https://leagueofitems.com/images/items/256/2503.webp",
+        "Cosmic Drive": "https://leagueofitems.com/images/items/256/4629.webp",
+        "Cryptbloom": "https://leagueofitems.com/images/items/256/3137.webp",
+        "Hextech Rocketbelt": "https://leagueofitems.com/images/items/256/3152.webp",
+        "Liandry’s Torment": "https://leagueofitems.com/images/items/256/6653.webp",
+        "Luden’s Companion": "https://leagueofitems.com/images/items/256/6655.webp",
+        "Malignance": "https://leagueofitems.com/images/items/256/3118.webp",
+        "Mejai’s Soulstealer": "https://leagueofitems.com/images/items/256/3041.webp",
+        "Morellonomicon": "https://leagueofitems.com/images/items/256/3165.webp",
+        "Riftmaker": "https://leagueofitems.com/images/items/256/4633.webp",
+        "Rod of Ages": "https://leagueofitems.com/images/items/256/6657.webp",
+        "Rylai’s Crystal Scepter": "https://leagueofitems.com/images/items/256/3116.webp",
+        "Stormsurge": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdWyOMFZlAweZQ2uErYvWDo3e-nQedHMAuCQ&s",
+        "Bloodletter’s Curse": "https://leagueofitems.com/images/items/256/8010.webp",
+        
+        // Attack Speed Items
+        "Guinsoo’s Rageblade": "https://leagueofitems.com/images/items/256/3124.webp",
+        "Kraken Slayer": "https://leagueofitems.com/images/items/256/6672.webp",
+        "Nashor’s Tooth": "https://leagueofitems.com/images/items/256/3115.webp",
+        "Wit’s End": "https://leagueofitems.com/images/items/256/3091.webp",
+        "Immortal Shieldbow": "https://leagueofitems.com/images/items/256/6673.webp",
+        "Navori Flickerblade": "https://leagueofitems.com/images/items/256/6675.webp",
+        "Phantom Dancer": "https://leagueofitems.com/images/items/256/3046.webp",
+        "Rapid Firecannon": "https://leagueofitems.com/images/items/256/3094.webp",
+        "Statikk Shiv": "https://leagueofitems.com/images/items/256/3087.webp",
+        "Terminus": "https://leagueofitems.com/images/items/256/3302.webp",
+        "Yun Tal Wildarrows": "https://leagueofitems.com/images/items/256/3032.webp",
+        
+        // Tank Items
+        "Dead Man’s Plate": "https://leagueofitems.com/images/items/256/3742.webp",
+        "Heartsteel": "https://leagueofitems.com/images/items/256/3084.webp",
+        "Sunfire Aegis": "https://leagueofitems.com/images/items/256/3068.webp",
+        "Warmog’s Armor": "https://leagueofitems.com/images/items/256/3083.webp",
+        "Experimental Hexplate": "https://leagueofitems.com/images/items/256/3073.webp",
+        "Hollow Radiance": "https://leagueofitems.com/images/items/256/6664.webp",
+        "Winter’s Approach": "https://leagueofitems.com/images/items/256/3119.webp",
+        
+        // Support Items
+        "Ardent Censer": "https://leagueofitems.com/images/items/256/3504.webp", 
+        "Dream Maker": "https://leagueofitems.com/images/items/256/3870.webp",
+        "Echoes of Helia": "https://leagueofitems.com/images/items/256/6620.webp",
+        "Zeke’s Convergence": "https://leagueofitems.com/images/items/256/3050.webp",
+        "Bloodsong": "https://leagueofitems.com/images/items/256/3877.webp",
+        "Bounty of Worlds": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtvHq_rgNUj6Ve_Ky-gmucU8SHbrGgexBqIw&s",
+        "Celestial Opposition": "https://leagueofitems.com/images/items/256/3869.webp",
+        "Dawncore": "https://leagueofitems.com/images/items/256/6621.webp",
+        "Imperial Mandate": "https://leagueofitems.com/images/items/256/4005.webp",
+        "Knight’s Vow": "https://leagueofitems.com/images/items/256/3109.webp",
+        "Locket of the Iron Solari": "https://leagueofitems.com/images/items/256/3190.webp",
+        "Mikael’s Blessing": "https://leagueofitems.com/images/items/256/3222.webp",
+        "Moonstone Renewer": "https://leagueofitems.com/images/items/256/6617.webp",
+        "Redemption": "https://leagueofitems.com/images/items/256/3107.webp",
+        "Shurelya’s Battlesong": "https://leagueofitems.com/images/items/256/2065.webp",
+        "Solstice Sleigh": "https://leagueofitems.com/images/items/256/3876.webp",
+        "Staff of Flowing Water": "https://leagueofitems.com/images/items/256/6616.webp",
+        "Trailblazer": "https://leagueofitems.com/images/items/256/3002.webp",
+        "Zaz’Zak’s Realmspike": "https://leagueofitems.com/images/items/256/3871.webp",
+
+        
+        // Other Items
+        "Axiom Arc": "https://leagueofitems.com/images/items/256/6696.webp",
+        "Chempunk Chainsword": "https://leagueofitems.com/images/items/256/6609.webp",
+        "Edge of Night": "https://leagueofitems.com/images/items/256/3814.webp",
+        "Spear of Shojin": "https://leagueofitems.com/images/items/256/3161.webp",
+        "Youmuu’s Ghostblade": "https://leagueofitems.com/images/items/256/3142.webp",
+        "Opportunity": "https://leagueofitems.com/images/items/256/6701.webp",
+        "Profane Hydra": "https://leagueofitems.com/images/items/256/6698.webp",
+        "Ravenous Hydra": "https://leagueofitems.com/images/items/256/3074.webp",
+        "Runaan’s Hurricane": "https://leagueofitems.com/images/items/256/3085.webp",
+        "Serpent’s Fang": "https://leagueofitems.com/images/items/256/6695.webp",
+        "Serylda’s Grudge": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5v2fW_UeWKWWBH8-MbJE6iEgC_s2fBMtTIQ&s",
+        "The Collector": "https://leagueofitems.com/images/items/256/6676.webp",
+        "Umbral Glaive": "https://leagueofitems.com/images/items/256/3179.webp",
+        "Vigilant Wardstone": "https://leagueofitems.com/images/items/256/4643.webp",
+        "Voltaic Cyclosword": "https://leagueofitems.com/images/items/256/6699.webp",
+
+         // Botas
+        "Berserker's Greaves": "https://i.namu.wiki/i/D1cyJ9ZzS4qVb9EcTTnBjC_4pAv0q8Q3F5cxGMZHr4-z4_ZwSDJ7he5QlJUzYfZEcZAIRjdfnHYcDA-gv7Wn5A.webp",
+        "Plated Steelcaps": "https://preview.redd.it/5p3ru4talan71.png?width=2048&format=png&auto=webp&s=bb26a63b343bedf40fca0ef2153f1461709561bd",
+        "Boots of Swiftness": "https://pbs.twimg.com/media/GM65CuHXkAAxz4l.png",
+        "Sorcerer's Shoes": "https://preview.redd.it/sorcerers-shoes-v0-7iq8h38l5ewd1.png?width=512&format=png&auto=webp&s=38363992f4017b00fbb458f064f81defc3cbd753",
+        "Ionian Boots of Lucidity": "https://pbs.twimg.com/media/GSpuXAUWsAAG-CO.png",
+        "Symbiotic Soles": "https://i.redd.it/do-you-guys-build-swiftness-boots-or-symbiotic-soles-v0-9uktoc9oudge1.jpg?width=512&format=pjpg&auto=webp&s=f319a96bac49093978cf3b39d03b51be438649c1",
+        "Mercury's Treads": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTo5LD43Sl2TORTFgcTBhD5mzLpS9az5PafaA&s"
+    };
+
+    const itens = [
+        "Abyssal Mask", "Archangel’s Staff", "Ardent Censer", "Axiom Arc", "Banshee’s Veil",
+        "Black Cleaver", "Blackfire Torch", "Blade of the Ruined King", "Bloodsong", "Bloodthirster",
+        "Bounty of Worlds", "Celestial Opposition", "Chempunk Chainsword", "Cosmic Drive", "Cryptbloom",
+        "Dawncore", "Dead Man’s Plate", "Death’s Dance", "Dream Maker", "Echoes of Helia",
+        "Eclipse", "Edge of Night", "Essence Reaver", "Experimental Hexplate", "Force of Nature",
+        "Frozen Heart", "Guardian Angel", "Guinsoo’s Rageblade", "Heartsteel", "Hextech Rocketbelt",
+        "Hollow Radiance", "Horizon Focus", "Hubris", "Hullbreaker", "Iceborn Gauntlet",
+        "Immortal Shieldbow", "Imperial Mandate", "Infinity Edge", "Jak’Shō, The Protean", "Kaenic Rookern",
+        "Knight’s Vow", "Kraken Slayer", "Liandry’s Torment", "Lich Bane", "Locket of the Iron Solari",
+        "Lord Dominik’s Regards", "Luden’s Companion", "Malignance", "Manamune", "Maw of Malmortius",
+        "Mejai’s Soulstealer", "Mercurial Scimitar", "Mikael’s Blessing", "Moonstone Renewer", "Morellonomicon",
+        "Mortal Reminder", "Nashor’s Tooth", "Navori Flickerblade", "Opportunity", "Overlord’s Bloodmail",
+        "Phantom Dancer", "Profane Hydra", "Rabadon’s Deathcap", "Randuin’s Omen", "Rapid Firecannon",
+        "Ravenous Hydra", "Redemption", "Riftmaker", "Rod of Ages", "Runaan’s Hurricane",
+        "Rylai’s Crystal Scepter", "Serpent’s Fang", "Serylda’s Grudge", "Shadowflame", "Shurelya’s Battlesong",
+        "Solstice Sleigh", "Spear of Shojin", "Spirit Visage", "Staff of Flowing Water", "Statikk Shiv",
+        "Sterak’s Gage", "Stormsurge", "Stridebreaker", "Sundered Sky", "Sunfire Aegis",
+        "Terminus", "The Collector", "Thornmail", "Titanic Hydra", "Trailblazer",
+        "Trinity Force", "Umbral Glaive", "Unending Despair", "Vigilant Wardstone", "Void Staff",
+        "Voltaic Cyclosword", "Warmog’s Armor", "Winter’s Approach", "Wit’s End", "Youmuu’s Ghostblade",
+        "Yun Tal Wildarrows", "Zaz’Zak’s Realmspike", "Zeke’s Convergence", "Zhonya’s Hourglass", "Bloodletter’s Curse"
+    ];
+
+
+    
+
+    const blockedItems = new Set();
+
+    function roletarItem() {
+        const resultDiv = document.getElementById('resultado');
+
+        // Inicializa listas se estiverem vazias
+        if (itensDisponiveis.length === 0) {
+            itensDisponiveis = [...itens];  // só itens normais
+        }
+        if (botasDisponiveis.length === 0) {
+            botasDisponiveis = ["Berserker's Greaves", "Plated Steelcaps", "Boots of Swiftness", "Sorcerer's Shoes", "Ionian Boots of Lucidity", "Symbiotic Soles", "Mercury's Treads"];
+        }
+
+        // Se já tem 6 itens (5 + bota), reseta tudo
+        if (buildAtual.length >= 6) {
+            buildAtual = [];
+            itensDisponiveis = [...itens];
+            botasDisponiveis = ["Berserker's Greaves", "Plated Steelcaps", "Boots of Swiftness", "Sorcerer's Shoes", "Ionian Boots of Lucidity", "Symbiotic Soles", "Mercury's Treads"];
+        }
+
+        let itemEscolhido;
+
+        if (buildAtual.length < 5) {
+            // Sorteia um item normal
+            const index = Math.floor(Math.random() * itensDisponiveis.length);
+            itemEscolhido = itensDisponiveis.splice(index, 1)[0];
+        } else {
+            // No 6º item, escolhe uma bota aleatória
+            const index = Math.floor(Math.random() * botasDisponiveis.length);
+            itemEscolhido = botasDisponiveis[index];
+            // Após escolher a bota, já não precisa remover da lista pois é só um item
+        }
+
+        buildAtual.push(itemEscolhido);
+
+        // Atualiza a exibição
+        resultDiv.innerHTML = `Build Gerada: <div class="build-items">${buildAtual.map(item => {
+            return `<div class="build-item">
+                <img src="${itemImages[item] || botasImages[item] || 'placeholder.png'}" alt="${item}" class="item-icon">
+                <span>${item}</span>
+            </div>`;
+        }).join('')}</div>`;
+    }
+
+
+    function criarListaDeItens() {
+        const itemsDiv = document.getElementById('items');
+        itens.forEach(item => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            const itemKey = item.toLowerCase().replace(/[’'']/g, '').replace(/\s+/g, '-');
+            itemDiv.innerHTML = `
+                <input type="checkbox" id="${item}" onchange="toggleItem('${item}')">
+                <img src="${itemImages[item] || 'placeholder.png'}" alt="${item}" class="item-icon">
+                <span>${item}</span>
+            `;
+            itemsDiv.appendChild(itemDiv);
+        });
+    }
+
+    function toggleItem(item) {
+        if (blockedItems.has(item)) {
+            blockedItems.delete(item);
+        } else {
+            blockedItems.add(item);
+        }
+    }
+
+    function gerarBuild() {
+        const itensDisponiveis = itens.filter(item => !blockedItems.has(item));
+        const build = [];
+
+        for (let i = 0; i < 5; i++) {
+            const randomIndex = Math.floor(Math.random() * itensDisponiveis.length);
+            build.push(itensDisponiveis[randomIndex]);
+            itensDisponiveis.splice(randomIndex, 1); // Remove o item selecionado para evitar duplicatas
+        }
+
+        // Adiciona uma bota aleatória
+
+        const botas = ["Berserker's Greaves", "Plated Steelcaps", "Boots of Swiftness","Sorcerer's Shoes","Ionian Boots of Lucidity",
+        "Symbiotic Soles","Mercury's Treads"];
+        const randomBota = botas[Math.floor(Math.random() * botas.length)];
+        build.push(randomBota);
+
+        const resultDiv = document.getElementById('resultado');
+        resultDiv.innerHTML = `Build Gerada: <div class="build-items">${build.map(item => {
+            const itemKey = item.toLowerCase().replace(/[’'']/g, '').replace(/\s+/g, '-');
+            return `<div class="build-item">
+                <img src="${itemImages[item] || 'placeholder.png'}" alt="${item}" class="item-icon">
+                <span>${item}</span>
+            </div>`;
+        }).join('')}</div>`;
+
+        
+    }
+
+    criarListaDeItens();
+</script>
+
+</body>
+</html>
